@@ -1,4 +1,4 @@
-FROM php:7.3-apache-stretch
+FROM php:7.3-apache
 
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     unzip \
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     curl
 
 # Install additional extensions
-RUN docker-php-ext-install bcmath soap xml intl json mcrypt mbstring
+RUN docker-php-ext-install -j$(nproc) bcmath soap xml intl json mbstring
 
 # Install PHP PEAR extensions
 RUN pear install channel://pear.php.net/HTTP_WebDAV_Server-1.0.0RC8 \
@@ -22,7 +22,8 @@ RUN pear install channel://pear.php.net/HTTP_WebDAV_Server-1.0.0RC8 \
     && pear upgrade
 
 # Install PECL extensions
-RUN pecl install scrypt memcached
+RUN pecl install mcrypt scrypt memcached
+
 
 # Oracle instantclient
 ADD instantclient-basiclite-linux.x64-12.2.0.1.0.zip /tmp/
@@ -43,5 +44,11 @@ RUN echo 'umask 002' >> /root/.bashrc
 RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8
 RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
 
+RUN apt-get install nano -y
+
+COPY docker-php.conf /etc/apache2/conf-enabled/docker-php.conf
+
 RUN a2enmod rewrite
 RUN service apache2 restart
+
+EXPOSE 80
