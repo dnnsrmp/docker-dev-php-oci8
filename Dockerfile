@@ -52,6 +52,6 @@ COPY vhost.conf /etc/apache2/sites-enabled/000-default.conf
 RUN a2enmod rewrite
 RUN service apache2 restart
 
-RUN echo "<?php echo phpinfo(); ?>" > /var/www/html/phpinfo.php
+RUN echo "<?php\n echo phpinfo();\n" > /var/www/html/phpinfo.php
 
 EXPOSE 80
