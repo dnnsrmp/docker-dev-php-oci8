@@ -6,6 +6,10 @@ services:
       dockerfile: Dockerfile
     image: php-oci8
     container_name: php-oci8
+    networks:
+      - appnet
+    volumes:
+        - .:/var/www/html
     ports:
       - '80:80'
     depends_on:
@@ -14,6 +18,12 @@ services:
     container_name: memcached
     image: memcached:alpine
     mem_limit: 256m
+    networks:
+      - appnet
     ports:
       - "11211:11211"
     command: memcached -m 192m
+
+networks:
+  appnet:
+    driver: bridge
