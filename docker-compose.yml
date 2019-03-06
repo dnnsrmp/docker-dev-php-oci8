@@ -1,0 +1,10 @@
+version: '2'
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: php-oci8
+    container_name: php-oci8
+    ports:
+      - '80:80'
