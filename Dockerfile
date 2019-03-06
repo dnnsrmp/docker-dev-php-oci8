@@ -12,18 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     libmemcached-dev \
     curl
 
-# Install additional extensions
-RUN docker-php-ext-install -j$(nproc) bcmath soap xml intl json mbstring
-
 # Install PHP PEAR extensions
 RUN pear install channel://pear.php.net/HTTP_WebDAV_Server-1.0.0RC8 \
     && pear clear-cache \
     && pear update-channels \
     && pear upgrade
-
-# Install PECL extensions
-RUN pecl install mcrypt scrypt memcached
-
 
 # Oracle instantclient
 ADD instantclient-basiclite-linux.x64-12.2.0.1.0.zip /tmp/
@@ -38,12 +31,23 @@ RUN ln -s /usr/local/instantclient_12_2 /usr/local/instantclient
 RUN ln -s /usr/local/instantclient/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
 RUN ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
 
-RUN echo 'export LD_LIBRARY_PATH="/usr/local/instantclient"' >> /root/.bashrc
-RUN echo 'umask 002' >> /root/.bashrc
-
 RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8
-RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
+RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient \
+	&& docker-php-ext-install oci8
 
+ENV LD_LIBRARY_PATH /usr/local/instantclient
+ENV TNS_ADMIN       /usr/local/instantclient
+ENV ORACLE_BASE     /usr/local/instantclient
+ENV ORACLE_HOME     /usr/local/instantclient
+
+# Install & enable PECL extensions
+RUN pecl install memcached scrypt mcrypt
+	&& docker-php-ext-install memcached scrypt mcrypt
+
+# Install additional extensions
+RUN docker-php-ext-install -j$(nproc) bcmath soap xml intl json mbstring
+
+# Install nano
 RUN apt-get install nano -y
 
 COPY php.ini /usr/local/etc/php/php.ini
