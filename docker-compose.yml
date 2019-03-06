@@ -8,3 +8,12 @@ services:
     container_name: php-oci8
     ports:
       - '80:80'
+    depends_on:
+      - memcached
+  memcached:
+    container_name: memcached
+    image: memcached:alpine
+    mem_limit: 256m
+    ports:
+      - "11211:11211"
+    command: memcached -m 192m
