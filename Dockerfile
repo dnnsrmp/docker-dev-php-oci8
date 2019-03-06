@@ -46,7 +46,7 @@ RUN echo "extension=oci8.so" > /usr/local/etc/php/conf.d/php-oci8.ini
 
 RUN apt-get install nano -y
 
-COPY docker-php.conf /etc/apache2/conf-enabled/docker-php.conf
+COPY php.ini /usr/local/etc/php/php.ini
 COPY vhost.conf /etc/apache2/sites-enabled/000-default.conf
 
 RUN a2enmod rewrite
