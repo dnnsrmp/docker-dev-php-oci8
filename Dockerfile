@@ -41,11 +41,11 @@ ENV ORACLE_BASE     /usr/local/instantclient
 ENV ORACLE_HOME     /usr/local/instantclient
 
 # Install & enable PECL extensions
-RUN pecl install memcached scrypt mcrypt \
-	&& docker-php-ext-enable memcached scrypt mcrypt
+RUN pecl install memcached scrypt \
+	&& docker-php-ext-enable memcached scrypt
 
 # Install additional extensions
-RUN docker-php-ext-install -j$(nproc) bcmath soap xml intl json mbstring
+RUN docker-php-ext-install -j$(nproc) bcmath soap xml intl
 
 # Install nano
 RUN apt-get install nano -y
@@ -56,6 +56,6 @@ COPY vhost.conf /etc/apache2/sites-enabled/000-default.conf
 RUN a2enmod rewrite
 RUN service apache2 restart
 
-RUN echo "<?php\n echo phpinfo();\n" > /var/www/html/phpinfo.php
+RUN echo "<?php\n echo phpinfo();\n" > /var/www/html/__phpinfo.php
 
 EXPOSE 80
