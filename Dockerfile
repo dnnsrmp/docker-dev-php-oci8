@@ -42,7 +42,7 @@ ENV ORACLE_HOME     /usr/local/instantclient
 
 # Install & enable PECL extensions
 RUN pecl install memcached scrypt mcrypt \
-	&& docker-php-ext-install memcached scrypt mcrypt
+	&& docker-php-ext-enable memcached scrypt mcrypt
 
 # Install additional extensions
 RUN docker-php-ext-install -j$(nproc) bcmath soap xml intl json mbstring
