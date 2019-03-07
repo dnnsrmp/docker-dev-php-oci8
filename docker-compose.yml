@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: php-oci8
-    container_name: php-oci8
+    container_name: php-73-oci8
     networks:
       - appnet
     volumes:
