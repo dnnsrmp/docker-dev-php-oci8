@@ -1,6 +1,13 @@
-FROM php:7.3-apache as php
+FROM composer:latest AS composer
+FROM php:7.3-apache AS php
 
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
+ENV LD_LIBRARY_PATH /usr/local/instantclient_12_2
+ENV TNS_ADMIN       /usr/local/instantclient_12_2
+ENV ORACLE_BASE     /usr/local/instantclient_12_2
+ENV ORACLE_HOME     /usr/local/instantclient_12_2
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends --autoremove apt-utils \
     unzip \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -10,7 +17,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends apt-utils \
     libz-dev \
     libxml2-dev \
     libmemcached-dev \
-    curl
+    curl \
+    wget \
+    gnupg2 \
+    git \
+    bzip2
+
 
 # Install PHP PEAR extensions
 RUN pear install channel://pear.php.net/HTTP_WebDAV_Server-1.0.0RC8 \
@@ -23,37 +35,25 @@ ADD instantclient-basiclite-linux.x64-12.2.0.1.0.zip /tmp/
 ADD instantclient-sdk-linux.x64-12.2.0.1.0.zip /tmp/
 ADD instantclient-sqlplus-linux.x64-12.2.0.1.0.zip /tmp/
 
-RUN unzip /tmp/instantclient-basiclite-linux.x64-12.2.0.1.0.zip -d /usr/local/
-RUN unzip /tmp/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /usr/local/
-RUN unzip /tmp/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /usr/local/
+RUN unzip /tmp/instantclient-basiclite-linux.x64-12.2.0.1.0.zip -d /usr/local/ \
+	&& unzip /tmp/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /usr/local/ \
+	&& unzip /tmp/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip -d /usr/local/ \
+	&& ln -s /usr/local/instantclient_12_2/libclntsh.so.12.1 /usr/local/instantclient_12_2/libclntsh.so
 
-RUN ln -s /usr/local/instantclient_12_2 /usr/local/instantclient
-RUN ln -s /usr/local/instantclient/libclntsh.so.12.1 /usr/local/instantclient/libclntsh.so
-RUN ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus
-
-RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8
-RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient \
+RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient_12_2 \
 	&& docker-php-ext-install oci8
 
-ENV LD_LIBRARY_PATH /usr/local/instantclient
-ENV TNS_ADMIN       /usr/local/instantclient
-ENV ORACLE_BASE     /usr/local/instantclient
-ENV ORACLE_HOME     /usr/local/instantclient
-
 # Install & enable PECL extensions
-RUN pecl install memcached scrypt \
-	&& docker-php-ext-enable memcached scrypt
+RUN pecl install memcached xdebug scrypt \
+	&& docker-php-ext-enable memcached xdebug scrypt
 
 # Install additional extensions
-RUN docker-php-ext-install -j$(nproc) bcmath soap xml intl
+RUN docker-php-ext-install -j$(nproc) bcmath soap intl \
+	&& docker-php-source delete
 
 # Install nano
-RUN apt-get install nano -y
+RUN apt-get install nano -y \
+    && apt-get clean
 
-COPY php.ini /usr/local/etc/php/php.ini
-COPY vhost.conf /etc/apache2/sites-enabled/000-default.conf
-
-RUN a2enmod rewrite
-RUN service apache2 restart
-
-EXPOSE 80
+# Composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
