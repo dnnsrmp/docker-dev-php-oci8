@@ -23,7 +23,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends --autoremove ap
     git \
     bzip2
 
-
 # Install PHP PEAR extensions
 RUN pear install channel://pear.php.net/HTTP_WebDAV_Server-1.0.0RC8 \
     && pear clear-cache \
