@@ -15,5 +15,5 @@
 It also contains curl, wget, gnupg2 and git for reasons.
   
 ```bash
-docker pull dnnsrmp/php-oci8
+docker pull dnnsrmp/php-oci8:5.6
 ```
