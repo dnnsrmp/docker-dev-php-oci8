@@ -1,5 +1,5 @@
 FROM composer:latest AS composer
-FROM php:7.3-apache AS php
+FROM php:5.6-apache AS php
 
 ENV LD_LIBRARY_PATH /usr/local/instantclient_12_2
 ENV TNS_ADMIN       /usr/local/instantclient_12_2
