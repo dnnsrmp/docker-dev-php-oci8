@@ -2,7 +2,7 @@
 
 ### PHP with Oracle Instant Client libraries
 
-- [PHP 7.3](http://php.net/) with following extensions
+- [PHP 5.6](http://php.net/) with following extensions
   - oci8
   - memcached
   - xdebug
