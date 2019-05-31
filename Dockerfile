@@ -17,10 +17,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends --autoremove ap
     libaio1 \
     libz-dev \
     libxml2-dev \
-	libmemcached-tools \
-    libmemcached-dev \
-    zlib1g \
-    zlib1g-dev \
     curl \
     wget \
     gnupg2 \
@@ -47,8 +43,8 @@ RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantcl
 	&& docker-php-ext-install oci8
 
 # Install & enable PECL extensions
-RUN pecl install memcached-2.0.0b2 scrypt \
-	&& docker-php-ext-enable memcached-2.0.0b2 scrypt
+RUN pecl install scrypt \
+	&& docker-php-ext-enable scrypt
 
 # Install additional extensions
 RUN docker-php-ext-install -j$(nproc) bcmath soap intl \
