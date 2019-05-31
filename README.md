@@ -5,7 +5,6 @@
 - [PHP 7.3](http://php.net/) with following extensions
   - oci8
   - memcached
-  - xdebug
   - scrypt
   - bcmath
   - soap
@@ -15,5 +14,5 @@
 It also contains curl, wget, gnupg2 and git for reasons.
   
 ```bash
-docker pull dnnsrmp/php-oci8
+docker pull dnnsrmp/php-oci8:latest
 ```

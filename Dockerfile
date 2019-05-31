@@ -43,8 +43,8 @@ RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantcl
 	&& docker-php-ext-install oci8
 
 # Install & enable PECL extensions
-RUN pecl install memcached xdebug scrypt \
-	&& docker-php-ext-enable memcached xdebug scrypt
+RUN pecl install memcached scrypt \
+	&& docker-php-ext-enable memcached scrypt
 
 # Install additional extensions
 RUN docker-php-ext-install -j$(nproc) bcmath soap intl \
