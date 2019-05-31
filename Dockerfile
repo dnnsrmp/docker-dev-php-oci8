@@ -1,5 +1,5 @@
 FROM composer:latest AS composer
-FROM php:7.3 AS php
+FROM php:7.3-apache AS php
 
 ENV LD_LIBRARY_PATH /usr/local/instantclient_12_2
 ENV TNS_ADMIN       /usr/local/instantclient_12_2
@@ -17,7 +17,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends --autoremove ap
     libz-dev \
     libxml2-dev \
     libmemcached-dev \
-    curl
+    curl \
+    wget \
+    gnupg2 \
+    git \
+    bzip2
 
 # Install PHP PEAR extensions
 RUN pear install channel://pear.php.net/HTTP_WebDAV_Server-1.0.0RC8 \
@@ -39,15 +43,16 @@ RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantcl
 	&& docker-php-ext-install oci8
 
 # Install & enable PECL extensions
-RUN pecl install memcached xdebug scrypt \
-	&& docker-php-ext-enable memcached xdebug scrypt
+RUN pecl install memcached scrypt \
+	&& docker-php-ext-enable memcached scrypt
 
 # Install additional extensions
 RUN docker-php-ext-install -j$(nproc) bcmath soap intl \
 	&& docker-php-source delete
 
 # Install nano
-RUN apt-get install nano -y
+RUN apt-get install nano -y \
+    && apt-get clean
 
 # Composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
