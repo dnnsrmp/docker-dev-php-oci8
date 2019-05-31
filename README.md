@@ -4,5 +4,5 @@
 ##### with prod settings (logs, e.g.)
 
 ```bash
-docker pull dnnsrmp/php-oci8:latest
+docker pull dnnsrmp/php-oci8:7.3
 ```
