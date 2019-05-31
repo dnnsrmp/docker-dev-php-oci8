@@ -2,7 +2,7 @@
 
 ### PHP with Oracle Instant Client libraries
 
-- [PHP 7.3](http://php.net/) with following extensions
+- [PHP 7.2](http://php.net/) with following extensions
   - oci8
   - memcached
   - scrypt
@@ -14,5 +14,5 @@
 It also contains curl, wget, gnupg2 and git for reasons.
   
 ```bash
-docker pull dnnsrmp/php-oci8:7.3
+docker pull dnnsrmp/php-oci8:7.2
 ```
