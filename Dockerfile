@@ -8,6 +8,7 @@ ENV ORACLE_HOME     /usr/local/instantclient_12_2
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends --autoremove apt-utils \
+	gcc make autoconf libc-dev pkg-config \
     unzip \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -16,7 +17,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends --autoremove ap
     libaio1 \
     libz-dev \
     libxml2-dev \
+	libmemcached-tools \
     libmemcached-dev \
+    zlib1g \
+    zlib1g-dev \
     curl \
     wget \
     gnupg2 \
@@ -43,8 +47,8 @@ RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantcl
 	&& docker-php-ext-install oci8
 
 # Install & enable PECL extensions
-RUN pecl install memcached xdebug scrypt \
-	&& docker-php-ext-enable memcached xdebug scrypt
+RUN pecl install memcached-2.0.0b2 scrypt \
+	&& docker-php-ext-enable memcached-2.0.0b2 scrypt
 
 # Install additional extensions
 RUN docker-php-ext-install -j$(nproc) bcmath soap intl \

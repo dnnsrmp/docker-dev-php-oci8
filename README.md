@@ -5,7 +5,6 @@
 - [PHP 5.6](http://php.net/) with following extensions
   - oci8
   - memcached
-  - xdebug
   - scrypt
   - bcmath
   - soap
